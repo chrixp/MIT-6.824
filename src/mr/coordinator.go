@@ -10,6 +10,7 @@ import (
 	"bufio"
 	"sync"
 	"encoding/gob"
+	"path"
 	
 )
 
@@ -19,18 +20,26 @@ type Coordinator struct {
 	// Your definitions here.
 	files []string
 	pendingMapJobs PendingMapJobs
+	pendingReduceJobs PendingReduceJobs
 	taskNumber int
-}
-
-func (coordinator *Coordinator) addFile(fileName string) {
-	coordinator.pendingMapJobs.addJob(fileName)
 }
 
 func (c *Coordinator) GiveAvailableJob(payload string, job *Job) error {
 	if(!c.pendingMapJobs.isEmpty()) {
 		(*job) = c.pendingMapJobs.getJob()
-		fmt.Printf("A worker picks up a MapJob with id %v\n", (*job).(MapJob).ID)
+		// fmt.Printf("A worker picks up a MapJob with path %v\n", (*job).(MapJob).FilePath)
+	} else if (!c.pendingReduceJobs.isEmpty()) {
+		(*job) = c.pendingReduceJobs.getJob()
+		// fmt.Printf("A worker picks up a ReduceJob for bucket %v\n", (*job).(ReduceJob).BucketNumber)
 	}
+	return nil
+}
+
+func (c *Coordinator) SignalCompletionOfMapJob(payload map[int]string, res *string) error {
+	for bucketNumber, bucketFileName := range payload {
+		c.pendingReduceJobs.addJob(bucketFileName, bucketNumber)
+	}
+	// fmt.Printf("Received %v Reduce Jobs\n", len(payload))
 	return nil
 }
 
@@ -56,12 +65,10 @@ func (c *Coordinator) server() {
 // if the entire job has finished.
 //
 func (c *Coordinator) Done() bool {
-	ret := false
+
 
 	// Your code here.
-
-
-	return ret
+	return c.pendingReduceJobs.isEmpty() && c.pendingMapJobs.isEmpty()
 }
 
 
@@ -95,8 +102,9 @@ func (coordinator *Coordinator) splitFileIntoChunks(fileName string, wg *sync.Wa
 
 	for i := 0; i <= NUMBER_OF_CHUNKS; i++ {
 		if(lineIndex < len(lines)) {
-			chunkFileName :=  fmt.Sprintf("%v/%v-%v", CHUNK_PATH, fileName, i)
-			chunkFile, err := os.Create(chunkFileName)
+			chunkFileName := fmt.Sprintf("%v-%v", fileName, i)
+			chunkFilePath :=  path.Join(CHUNK_PATH, chunkFileName)
+			chunkFile, err := os.Create(chunkFilePath)
 			if(err != nil) {
 				fmt.Println(err)
 			}
@@ -104,12 +112,10 @@ func (coordinator *Coordinator) splitFileIntoChunks(fileName string, wg *sync.Wa
 				fmt.Fprintf(chunkFile, "%v\n", lines[lineIndex])
 				lineIndex += 1
 			}
-			coordinator.addFile(chunkFileName)
+			coordinator.pendingMapJobs.addJob(chunkFileName, chunkFilePath)
 		}
 		
 	}
-	
-	fmt.Printf("Splitting %s in to %v chunks\n", fileName, len(chunkFileNames))
 
 	return &chunkFileNames
 }
@@ -125,7 +131,11 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 	// os.RemoveAll(CHUNK_PATH) // Remove all current split chunks
 	// os.MkdirAll(CHUNK_PATH, 0777)
 	gob.Register(MapJob{})
-	c := Coordinator{ files: files }
+	gob.Register(ReduceJob{})
+	c := Coordinator{ 
+		files: files,
+		pendingReduceJobs: InitPendingReduceJobs(nReduce),
+	}
 
 	var splitChunkWg sync.WaitGroup
 
@@ -135,12 +145,6 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 	}
 
 	splitChunkWg.Wait()
-
-	// Your code here.
-	for _,file := range c.files {
-		fmt.Printf("File waiting to be picked up: %d \n", file)
-	}
-
 
 	c.server()
 	return &c

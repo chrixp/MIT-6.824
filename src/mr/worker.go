@@ -8,6 +8,8 @@ import "time"
 import "encoding/gob"
 import "encoding/json"
 import "os"
+import "sort"
+import "path"
 
 //
 // Map functions return a slice of KeyValue.
@@ -16,6 +18,14 @@ type KeyValue struct {
 	Key   string
 	Value string
 }
+
+// for sorting by key.
+type ByKey []KeyValue
+
+// for sorting by key.
+func (a ByKey) Len() int           { return len(a) }
+func (a ByKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
 
 //
 // use ihash(key) % NReduce to choose the reduce
@@ -40,25 +50,26 @@ func Worker(mapf func(string, string) []KeyValue,
 		switch typeAssertedJob := (*job).(type) {
 			case MapJob:
 				executeMapFunction(mapf, typeAssertedJob)
+			case ReduceJob:
+				executeReduceFunction(reducef, typeAssertedJob)
 			default:
-				fmt.Println("NO TYPE FOUND")
+				time.Sleep( 2 * time.Second)
+				return
 		}
-		time.Sleep(time.Second * 10)
 	}
 }
 
 const MAP_OUTPUT_FOLDER = "intermediates"
 
 func executeMapFunction(mapf func(string, string) []KeyValue, job MapJob) {
-	fileName := job.FileName
+	// fmt.Println("Executing map function")
+	fileName := job.FilePath
 	fileContent := readFileAsString(fileName)
+	if(fileContent == "") {
+		fmt.Println("File content is empty")
+		return
+	}
 	mapResult := mapf(fileName, fileContent)
-
-	// intermediateFileName := fmt.SPrintF("%s/%v", MAP_OUTPUT_FOLDER, fileName)
-	// file, err := os.Open(intermediateFileName)
-	// if err != nil {
-	// 	return
-	// }
 
 	if(len(mapResult) > 0) {
 		// Put intermediate results into reduce buckets
@@ -69,24 +80,86 @@ func executeMapFunction(mapf func(string, string) []KeyValue, job MapJob) {
 		}
 
 		// Write each bucket to its file
+		reduceBucketFileNames := make(map[int]string)
 		for bucketNumber, bucketContent := range reduceBuckets {
-			successfulWrites := writeEncodedBucketContentToFile(bucketNumber, &bucketContent, &job)
-			fmt.Println(successfulWrites)
+			reduceFileName, writeErr := writeEncodedBucketContentToFile(bucketNumber, &bucketContent, &job)
+			if(writeErr != nil) {
+				fmt.Println(writeErr)
+				return 
+			} else {
+				reduceBucketFileNames[bucketNumber] = reduceFileName
+			}
+
 		}
+		var temp string
+		// fmt.Printf("Finished Map Job. %v Reduce jobs found. Signaling to coordinator...\n", len(reduceBucketFileNames))
+		call("Coordinator.SignalCompletionOfMapJob", reduceBucketFileNames, &temp)
 	}
 }
 
-func writeEncodedBucketContentToFile(bucketNumber int, bucketContent *[]KeyValue, job *MapJob) (successfulWrites *[]string) {
-	successfulWrites = &[]string{}
-	fmt.Printf("Bucket number %v \n", bucketNumber)
-	bucketFileName := fmt.Sprintf("%s/%v-%v", MAP_OUTPUT_FOLDER, job.ID, bucketNumber)
-	fmt.Printf("Writing content to bucket %v ...\n", bucketFileName)
+func executeReduceFunction(reducef func(string, []string) string, job ReduceJob) {
+	kva := []KeyValue{}
+	for _,fileName := range(job.FileNames) {
+		intermediateKva := readEncodedBucketContentFromFile(fileName)
+		if(len(*intermediateKva) == 0) {
+			fmt.Println("Empty intermediate kva. Terminating program")
+		}
+		kva = append(kva, (*intermediateKva)...)
+	}
+
+
+	oname := fmt.Sprintf("mr-out-%v", job.BucketNumber)
+	ofile, _ := os.Create(oname)
+
+	sort.Sort(ByKey(kva))
+
+	i := 0
+	for i < len(kva) {
+		j := i + 1
+		// Finding the range from i to j, where every element between i and j have the same key
+		for j < len(kva) && kva[j].Key == kva[i].Key {
+			j++
+		}
+		values := []string{}
+		for k := i; k < j; k++ {
+			values = append(values, kva[k].Value)
+		}
+		output := reducef(kva[i].Key, values)
+
+		// this is the correct format for each line of Reduce output.
+		fmt.Fprintf(ofile, "%v %v\n", kva[i].Key, output)
+
+		i = j
+	}
+}
+
+func readEncodedBucketContentFromFile(fileName string) (kva *[]KeyValue) {
+	kva = &[]KeyValue{}
+	file, err := os.Open(fileName)
+    if err != nil {
+		fmt.Println(err)
+        return 
+    }
+    defer file.Close()
+
+	dec := json.NewDecoder(file)
+	for {
+	  var kv KeyValue
+	  if err := dec.Decode(&kv); err != nil {
+		break
+	  }
+	  *kva = append(*kva, kv)
+	}
+	return
+}
+
+func writeEncodedBucketContentToFile(bucketNumber int, bucketContent *[]KeyValue, job *MapJob) (string, error) {
+	bucketFileName := path.Join(MAP_OUTPUT_FOLDER, fmt.Sprintf("%v-%v", job.FileName, bucketNumber))
 	bucketFile, err := os.Create(bucketFileName)
 
 	if err != nil {
 		fmt.Println("Error has happened")
-		fmt.Println(err)
-		return 
+		return "", err
 	}
 
 	
@@ -96,7 +169,7 @@ func writeEncodedBucketContentToFile(bucketNumber int, bucketContent *[]KeyValue
 	}
 
 	bucketFile.Close()
-	return
+	return bucketFileName, nil
 }
 
 func askCoordinatorForJob() *Job {
@@ -112,6 +185,7 @@ func askCoordinatorForJob() *Job {
 func call(rpcname string, args interface{}, reply interface{}) bool {
 	// c, err := rpc.DialHTTP("tcp", "127.0.0.1"+":1234")
 	gob.Register(MapJob{})
+	gob.Register(ReduceJob{})
 	sockname := coordinatorSock()
 	c, err := rpc.DialHTTP("unix", sockname)
 	if err != nil {

@@ -4,3 +4,4 @@ api.key
 *-handin.tar.gz
 src/main/chunks/*
 src/main/intermediates/*
+mr-out-*

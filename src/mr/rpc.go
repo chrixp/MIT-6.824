@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"sync"
 	"io/ioutil"
-	"github.com/twinj/uuid"
+	// "fmt"
 )
 
 type JobType int
@@ -27,30 +27,13 @@ type Job interface {
 
 // Map Job Definition
 type MapJob struct {
-	ID uuid.UUID
 	FileName string
+	FilePath string
 }
 
-func createMapJob(fileName string) (job MapJob) {
-	job = MapJob{
-		FileName: fileName,
-		ID: uuid.NewV4(),
-	}
-	return
-}
 
 func (mapJob MapJob) GetType() JobType {
 	return MapJobType
-}
-
-// Reduce Job Definition
-type ReduceJob struct {
-	FileName string
-	BucketNumber int
-}
-
-func (reduceJob ReduceJob) GetType() JobType {
-	return ReduceJobType
 }
 
 
@@ -60,39 +43,91 @@ type PendingMapJobs struct {
 	mu sync.Mutex
 }
 
-func (pendingMapJobs *PendingMapJobs) addJob(fileName string) {
+func (pendingMapJobs *PendingMapJobs) addJob(fileName string, filePath string) {
 	pendingMapJobs.mu.Lock()
-	newJob := createMapJob(fileName)
-	pendingMapJobs.Jobs = append(pendingMapJobs.Jobs, newJob)
+	pendingMapJobs.Jobs = append(pendingMapJobs.Jobs, MapJob{
+		FileName: fileName,
+		FilePath: filePath,
+	})
 	pendingMapJobs.mu.Unlock()
 }
 
 func (pendingMapJobs *PendingMapJobs) getJob() (ret MapJob) {
 	pendingMapJobs.mu.Lock()
-	jobCount := len(pendingMapJobs.Jobs)
-	ret = pendingMapJobs.Jobs[jobCount - 1]
-	pendingMapJobs.Jobs = pendingMapJobs.Jobs[:jobCount -1]
-	pendingMapJobs.mu.Unlock()
+	defer pendingMapJobs.mu.Unlock()
+	if(len(pendingMapJobs.Jobs) > 0) {
+		jobCount := len(pendingMapJobs.Jobs)
+		ret = pendingMapJobs.Jobs[jobCount - 1]
+		pendingMapJobs.Jobs = pendingMapJobs.Jobs[:jobCount -1]
+
+	}
 	return
 }
 
 func (pendingMapJobs *PendingMapJobs) isEmpty() bool {
+	pendingMapJobs.mu.Lock()
+	defer pendingMapJobs.mu.Unlock()
 	return len(pendingMapJobs.Jobs) == 0
+}
+
+// Reduce Job Definition
+type ReduceJob struct {
+	FileNames []string
+	BucketNumber int
+}
+
+func (reduceJob ReduceJob) GetType() JobType {
+	return ReduceJobType
 }
 
 // Pending Reduce Jobs
 type PendingReduceJobs struct {
-	Jobs [][]ReduceJobs
+	Jobs []ReduceJob
 	mu sync.Mutex
 }
 
-func (pendingReduceJobs *PendingReduceJobs) addJob(fileNames []string, bucketNumber int) {
+func (pendingReduceJobs *PendingReduceJobs) addJob(fileName string, bucketNumber int) {
 	pendingReduceJobs.mu.Lock()
-	for _, fileName := range fileNames {
-		
-	}
+	pendingReduceJobs.Jobs[bucketNumber].FileNames = append(pendingReduceJobs.Jobs[bucketNumber].FileNames, fileName)
 	pendingReduceJobs.mu.Unlock()
 }
+
+func (pendingReduceJobs *PendingReduceJobs) getJob() (ret ReduceJob) {
+	pendingReduceJobs.mu.Lock()
+	defer pendingReduceJobs.mu.Unlock()
+	for bucketNumber,_ := range pendingReduceJobs.Jobs {
+		if(len(pendingReduceJobs.Jobs[bucketNumber].FileNames) > 0) {
+			ret = pendingReduceJobs.Jobs[bucketNumber]
+			pendingReduceJobs.Jobs[bucketNumber].FileNames = nil
+			return
+		}
+	}
+
+	return 
+}
+
+func (pendingReduceJobs *PendingReduceJobs) isEmpty() bool {
+	pendingReduceJobs.mu.Lock()
+	defer pendingReduceJobs.mu.Unlock()
+	for bucketNumber,_ := range pendingReduceJobs.Jobs {
+		if(len(pendingReduceJobs.Jobs[bucketNumber].FileNames) > 0) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func InitPendingReduceJobs(nReduce int) PendingReduceJobs {
+	twoDReduceJobs := make([]ReduceJob, nReduce)
+	for i:=0; i < nReduce; i++ {
+		twoDReduceJobs[i] = ReduceJob{ BucketNumber: i }
+	}
+	return PendingReduceJobs {
+		Jobs: twoDReduceJobs,
+	}
+}
+
 
 // Add your RPC definitions here.
 
