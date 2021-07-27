@@ -12,6 +12,7 @@ import (
 	"encoding/gob"
 	"path"
 	"time"
+	"errors"
 	"github.com/twinj/uuid"
 )
 
@@ -26,15 +27,24 @@ type Coordinator struct {
 	taskNumber int
 }
 
+func (c *Coordinator) PrintInfo() {
+	fmt.Printf("Pending Map Jobs: %v, Pending Reduce Jobs %v, Running Jobs: %v \n", c.pendingMapJobs.size(), c.pendingReduceJobs.size(), c.runningJobs.size())
+	
+}
+
 func (c *Coordinator) GiveAvailableJob(payload string, job *Job) error {
 	if(!c.pendingMapJobs.isEmpty()) {
 		(*job) = c.pendingMapJobs.getJob()
+		c.runningJobs.addJob(*job, time.Now())
 		// fmt.Printf("A worker picks up a MapJob with path %v\n", (*job).(MapJob).FilePath)
 	} else if (!c.pendingReduceJobs.isEmpty()) {
 		(*job) = c.pendingReduceJobs.getJob()
+		c.runningJobs.addJob(*job, time.Now())
 		// fmt.Printf("A worker picks up a ReduceJob for bucket %v\n", (*job).(ReduceJob).BucketNumber)
+	} else if(c.runningJobs.isEmpty()) {
+		return errors.New("No more jobs")
 	}
-	c.runningJobs.addJob(*job, time.Now())
+
 	return nil
 }
 
@@ -74,10 +84,19 @@ func (c *Coordinator) server() {
 // if the entire job has finished.
 //
 func (c *Coordinator) Done() bool {
-
-
 	// Your code here.
 	return c.pendingReduceJobs.isEmpty() && c.pendingMapJobs.isEmpty() && c.runningJobs.isEmpty()
+}
+
+func (c *Coordinator) CheckIfJobIsDone() {
+	for {
+		time.Sleep(2 * time.Second)
+		if(c.Done()) {
+			break
+		}
+	}
+	fmt.Println("Job is done")
+	os.Exit(0)
 }
 
 
@@ -154,6 +173,7 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 	}
 
 	splitChunkWg.Wait()
+	go c.CheckIfJobIsDone()
 
 	c.server()
 	return &c

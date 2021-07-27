@@ -46,16 +46,17 @@ func Worker(mapf func(string, string) []KeyValue,
 
 	for {
 		job := askCoordinatorForJob()
-
 		switch typeAssertedJob := (*job).(type) {
 			case MapJob:
 				executeMapFunction(mapf, typeAssertedJob)
 			case ReduceJob:
 				executeReduceFunction(reducef, typeAssertedJob)
 			default:
-				time.Sleep( 2 * time.Second)
-				return
+				time.Sleep(1 * time.Second)
+
 		}
+
+
 	}
 }
 
@@ -70,17 +71,17 @@ func executeMapFunction(mapf func(string, string) []KeyValue, job MapJob) {
 		return
 	}
 	mapResult := mapf(fileName, fileContent)
-
+	reduceBuckets := make(map[int][]KeyValue)
+	reduceBucketFileNames := make(map[int]string)
 	if(len(mapResult) > 0) {
 		// Put intermediate results into reduce buckets
-		reduceBuckets := make(map[int][]KeyValue)
 		for _, kv := range mapResult {
 			bucketNumber := ihash(kv.Key)
 			reduceBuckets[bucketNumber] = append(reduceBuckets[bucketNumber], kv)
 		}
 
 		// Write each bucket to its file
-		reduceBucketFileNames := make(map[int]string)
+		
 		for bucketNumber, bucketContent := range reduceBuckets {
 			reduceFileName, writeErr := writeEncodedBucketContentToFile(bucketNumber, &bucketContent, &job)
 			if(writeErr != nil) {
@@ -91,13 +92,17 @@ func executeMapFunction(mapf func(string, string) []KeyValue, job MapJob) {
 			}
 
 		}
-		var temp string
-		// fmt.Printf("Finished Map Job. %v Reduce jobs found. Signaling to coordinator...\n", len(reduceBucketFileNames))
-		call("Coordinator.SignalCompletionOfMapJob", MapJobResult{
-			ReduceJobs: reduceBucketFileNames,
-			ID: job.ID,
-		}, &temp)
+		
+	} else {
+		fmt.Println("Empty bucket")
+		fmt.Println(job)
 	}
+	var temp string
+	// fmt.Printf("Finished Map Job. %v Reduce jobs found. Signaling to coordinator...\n", len(reduceBucketFileNames))
+	call("Coordinator.SignalCompletionOfMapJob", MapJobResult{
+		ReduceJobs: reduceBucketFileNames,
+		ID: job.ID,
+	}, &temp)
 }
 
 func executeReduceFunction(reducef func(string, []string) string, job ReduceJob) {
@@ -136,7 +141,6 @@ func executeReduceFunction(reducef func(string, []string) string, job ReduceJob)
 	}
 	var temp string
 	call("Coordinator.SignalCompletionOfReduceJob", job.ID, &temp)
-
 }
 
 func readEncodedBucketContentFromFile(fileName string) (kva *[]KeyValue) {
@@ -179,10 +183,12 @@ func writeEncodedBucketContentToFile(bucketNumber int, bucketContent *[]KeyValue
 }
 
 
-
 func askCoordinatorForJob() *Job {
 	var job Job
-	call("Coordinator.GiveAvailableJob", "", &job)
+	success := call("Coordinator.GiveAvailableJob", "", &job)
+	if(success == false) {
+		os.Exit(0)
+	}
 	return &job
 }
 //

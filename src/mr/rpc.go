@@ -13,7 +13,7 @@ import (
 	"io/ioutil"
 	"github.com/twinj/uuid"
 	"time"
-	//"fmt"
+	"fmt"
 )
 
 type JobType int
@@ -63,6 +63,12 @@ type MapJobResult struct {
 type PendingMapJobs struct {
 	Jobs []MapJob
 	mu sync.Mutex
+}
+
+func (pendingMapJobs *PendingMapJobs) size() int {
+	pendingMapJobs.mu.Lock()
+	defer pendingMapJobs.mu.Unlock()
+	return len(pendingMapJobs.Jobs)
 }
 
 func (pendingMapJobs *PendingMapJobs) addJob(fileName string, filePath string) {
@@ -142,6 +148,18 @@ func (pendingReduceJobs *PendingReduceJobs) isEmpty() bool {
 	return true
 }
 
+func (pendingReduceJobs *PendingReduceJobs) size() int {
+	pendingReduceJobs.mu.Lock()
+	defer pendingReduceJobs.mu.Unlock()
+	i := 0 
+	for bucketNumber,_ := range pendingReduceJobs.Jobs {
+		if(len(pendingReduceJobs.Jobs[bucketNumber].FileNames) > 0) {
+			i += 1
+		}
+	}
+	return i
+}
+
 func InitPendingReduceJobs(nReduce int) PendingReduceJobs {
 	twoDReduceJobs := make([]ReduceJob, nReduce)
 	for i:=0; i < nReduce; i++ {
@@ -179,17 +197,19 @@ func (runningJobs *RunningJobs) addJob(newJob Job, timeStarted time.Time) {
 
 func (runningJobs *RunningJobs) removeJob(id uuid.UUID) {
 	runningJobs.mu.Lock()
+	defer runningJobs.mu.Unlock()
 	for i,job := range runningJobs.Jobs {
 		if (job.JobPt).GetUuid() == id {
 			jobsLength := len(runningJobs.Jobs)
 			runningJobs.Jobs[i] = runningJobs.Jobs[jobsLength - 1]
 			runningJobs.Jobs = runningJobs.Jobs[:jobsLength - 1]
 			// fmt.Printf("Remove Job %v\n", id)
-			break
+			return
 		}
 	}
+	fmt.Println("Can not be found")
 
-	runningJobs.mu.Unlock()
+
 }
 
 func (runningJobs *RunningJobs) isEmpty() bool {
@@ -198,8 +218,12 @@ func (runningJobs *RunningJobs) isEmpty() bool {
 	return len(runningJobs.Jobs) == 0
 }
 
-
-
+func (runningJobs *RunningJobs) size() int {
+	runningJobs.mu.Lock()
+	defer runningJobs.mu.Unlock()
+	fmt.Println(runningJobs.Jobs)
+	return len(runningJobs.Jobs)
+}
 
 // Add your RPC definitions here.
 
