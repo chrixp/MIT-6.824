@@ -11,7 +11,8 @@ import (
 	"sync"
 	"encoding/gob"
 	"path"
-	
+	"time"
+	"github.com/twinj/uuid"
 )
 
 
@@ -21,6 +22,7 @@ type Coordinator struct {
 	files []string
 	pendingMapJobs PendingMapJobs
 	pendingReduceJobs PendingReduceJobs
+	runningJobs RunningJobs
 	taskNumber int
 }
 
@@ -32,14 +34,21 @@ func (c *Coordinator) GiveAvailableJob(payload string, job *Job) error {
 		(*job) = c.pendingReduceJobs.getJob()
 		// fmt.Printf("A worker picks up a ReduceJob for bucket %v\n", (*job).(ReduceJob).BucketNumber)
 	}
+	c.runningJobs.addJob(*job, time.Now())
 	return nil
 }
 
-func (c *Coordinator) SignalCompletionOfMapJob(payload map[int]string, res *string) error {
-	for bucketNumber, bucketFileName := range payload {
+func (c *Coordinator) SignalCompletionOfMapJob(payload MapJobResult, res *string) error {
+	for bucketNumber, bucketFileName := range payload.ReduceJobs {
 		c.pendingReduceJobs.addJob(bucketFileName, bucketNumber)
 	}
+	c.runningJobs.removeJob(payload.ID)
 	// fmt.Printf("Received %v Reduce Jobs\n", len(payload))
+	return nil
+}
+
+func (c* Coordinator) SignalCompletionOfReduceJob(id uuid.UUID, res *string) error {
+	c.runningJobs.removeJob(id)
 	return nil
 }
 
@@ -68,7 +77,7 @@ func (c *Coordinator) Done() bool {
 
 
 	// Your code here.
-	return c.pendingReduceJobs.isEmpty() && c.pendingMapJobs.isEmpty()
+	return c.pendingReduceJobs.isEmpty() && c.pendingMapJobs.isEmpty() && c.runningJobs.isEmpty()
 }
 
 

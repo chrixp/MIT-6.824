@@ -363,7 +363,7 @@ Baton 1
 Battle 2
 Baxter 1
 Bayswater 1
-Be 21
+Be 22
 Beaded 1
 Bear 3
 Beatrice 1
@@ -380,7 +380,7 @@ Beeches 8
 Been 1
 Beer 1
 Beethoven 1
-Before 29
+Before 30
 Beg 1
 Begin 1
 Begins 1
@@ -1059,7 +1059,7 @@ Diversity 1
 Division 1
 Divorce 1
 Divorces 1
-Do 160
+Do 161
 Doan 7
 Dobbin 1
 Dobbins 7
@@ -1566,7 +1566,7 @@ Goliah 1
 Goliar 1
 Gone 8
 Goo 1
-Good 138
+Good 139
 Goodbody 1
 Goodbye 23
 Goodge 2
@@ -2014,7 +2014,7 @@ Islands 1
 Isle 1
 Isn 5
 Isotta 1
-It 1578
+It 1588
 Italian 8
 Italians 1
 Italy 7
@@ -2436,7 +2436,7 @@ Maturity 1
 Maudsley 1
 Mauritius 1
 Maxbohm 1
-May 28
+May 30
 Maybe 18
 Mayfair 3
 Mayflower 1
@@ -3348,7 +3348,7 @@ Sally 52
 Salt 8
 Salvation 1
 Same 1
-Samsa 28
+Samsa 34
 Samuel 7
 San 4
 Sand 1
@@ -4510,7 +4510,7 @@ accurate 4
 accurately 4
 accursed 5
 accusation 1
-accusations 1
+accusations 2
 accuse 4
 accused 17
 accuser 1
@@ -4549,7 +4549,7 @@ acquitted 3
 acre 1
 acres 3
 acrobats 1
-across 181
+across 183
 acrost 4
 act 57
 acted 25
@@ -4837,7 +4837,7 @@ although 93
 altitude 1
 altogether 17
 aluz 1
-always 452
+always 456
 alwuz 1
 am 829
 amalgam 1
@@ -5169,7 +5169,7 @@ ashes 41
 asho 1
 ashore 26
 aside 34
-ask 160
+ask 161
 askance 1
 asked 353
 asking 17
@@ -5217,6 +5217,7 @@ association 2
 assuage 1
 assume 4
 assumed 13
+assuming 1
 assurance 2
 assurances 1
 assure 24
@@ -5599,10 +5600,11 @@ become 130
 becomes 19
 becoming 18
 becuz 12
-bed 254
+bed 275
 bedchamber 2
 bedclothes 2
 bedded 3
+bedding 1
 bedewed 1
 bedim 1
 bedpost 3
@@ -5650,7 +5652,7 @@ beginning 51
 beginnings 1
 begins 18
 begone 2
-begun 85
+begun 86
 behalf 4
 behave 16
 behaved 8
@@ -6044,7 +6046,7 @@ bosom 19
 bosoms 1
 boss 17
 botch 1
-both 205
+both 206
 bother 25
 bothered 5
 botherin 1
@@ -6382,7 +6384,7 @@ bustling 1
 bustlings 1
 busy 23
 busybody 2
-but 3288
+but 3314
 butcher 9
 butler 10
 butt 3
@@ -6448,7 +6450,7 @@ calendar 1
 calf 21
 calico 9
 call 147
-called 237
+called 246
 callin 1
 calling 25
 callous 2
@@ -6542,7 +6544,7 @@ career 8
 careers 1
 carefree 1
 careful 27
-carefully 36
+carefully 39
 careless 4
 carelessest 1
 carelessly 8
@@ -6629,7 +6631,7 @@ causing 8
 caustic 1
 caution 6
 cautioned 1
-cautious 2
+cautious 4
 cautiously 10
 cave 61
 caved 4
@@ -7036,7 +7038,7 @@ clenched 4
 clenching 1
 cler 1
 clergyman 9
-clerk 20
+clerk 41
 clerks 6
 clever 39
 cleverly 1
@@ -7284,11 +7286,11 @@ companion 78
 companionless 1
 companions 24
 companionship 4
-company 61
+company 64
 comparable 1
 comparative 1
 comparatively 4
-compared 8
+compared 9
 compares 1
 comparing 1
 compass 4
@@ -7399,7 +7401,7 @@ condemned 16
 condemns 1
 condescend 3
 condescension 1
-condition 30
+condition 31
 conditions 8
 condolence 1
 conduce 2
@@ -7468,6 +7470,7 @@ conjure 4
 conjured 2
 connected 21
 connection 19
+connections 1
 conned 1
 connivance 1
 connoisseurs 1
@@ -7489,7 +7492,7 @@ consequential 1
 consequently 8
 conservatory 8
 considable 6
-consider 25
+consider 26
 considerable 88
 considerably 15
 considerate 4
@@ -7580,7 +7583,7 @@ continually 31
 continuance 1
 continuation 1
 continue 22
-continued 80
+continued 81
 continues 3
 continuing 2
 continuously 2
@@ -7590,6 +7593,7 @@ contract 3
 contracted 1
 contraction 3
 contractor 1
+contracts 1
 contradict 2
 contradictory 1
 contralto 1
@@ -7602,7 +7606,7 @@ contrite 1
 contrition 1
 contrive 6
 contrived 6
-control 13
+control 14
 controlled 4
 contumely 2
 conundrums 1
@@ -7729,9 +7733,9 @@ couches 1
 cough 11
 coughed 1
 coughing 4
-coughs 1
+coughs 2
 could 1496
-couldn 263
+couldn 266
 couldst 1
 council 1
 counsel 17
@@ -7781,7 +7785,7 @@ courtyard 11
 cousin 48
 cousins 3
 cove 1
-cover 18
+cover 19
 covered 71
 covering 4
 coverlet 1
@@ -8103,7 +8107,7 @@ dampness 1
 damps 3
 dan 1
 dance 27
-danced 33
+danced 34
 dances 1
 dancette 1
 dancing 22
@@ -8128,7 +8132,7 @@ dared 38
 daren 1
 dares 3
 daresay 5
-daring 8
+daring 9
 dark 205
 darken 1
 darkened 8
@@ -8457,7 +8461,7 @@ desired 34
 desires 11
 desiring 2
 desirous 5
-desk 19
+desk 21
 desks 1
 desolate 10
 desolated 2
@@ -8537,7 +8541,7 @@ devised 3
 devoid 2
 devolved 1
 devote 6
-devoted 25
+devoted 26
 devotedly 4
 devoting 1
 devotion 6
@@ -8581,7 +8585,7 @@ dies 3
 diet 2
 differed 2
 difference 35
-different 99
+different 102
 differently 4
 differing 1
 difficult 31
@@ -9253,7 +9257,7 @@ eccentricities 1
 eccentricity 2
 ecclesiastical 1
 ecclesiastics 1
-echo 4
+echo 5
 echoed 11
 echoes 4
 echoing 2
@@ -9326,7 +9330,7 @@ elaborately 5
 elaboration 1
 elapse 1
 elapsed 11
-elastic 6
+elastic 7
 elasticity 1
 elbow 16
 elbowed 1
@@ -9426,7 +9430,7 @@ employe 2
 employed 18
 employee 8
 employees 20
-employer 4
+employer 6
 employers 3
 employing 2
 employment 7
@@ -9752,7 +9756,7 @@ exceptional 4
 exceptionally 3
 excess 11
 excesses 2
-excessive 5
+excessive 6
 excessively 5
 exchange 10
 exchanged 10
@@ -10002,7 +10006,7 @@ faltering 2
 fambly 1
 fame 3
 famed 4
-familiar 27
+familiar 28
 familiarity 4
 familiarized 1
 familiarly 1
@@ -10413,13 +10417,13 @@ floors 1
 flopped 1
 florid 3
 florins 4
-floundering 2
+floundering 3
 flour 5
 flourish 1
 flourished 2
 flourishing 2
 flow 10
-flowed 10
+flowed 11
 flower 42
 flowered 1
 flowering 2
@@ -10474,7 +10478,7 @@ folks 36
 foller 2
 follered 2
 follies 2
-follow 69
+follow 70
 followed 137
 followers 2
 following 71
@@ -10512,7 +10516,7 @@ footmen 3
 footpaths 1
 footprints 1
 footstep 1
-footsteps 9
+footsteps 10
 fopperies 1
 foppishness 1
 for 4247
@@ -10938,7 +10942,7 @@ genlman 2
 genlmen 2
 gent 1
 genteel 1
-gentle 57
+gentle 58
 gentleman 121
 gentlemanly 1
 gentlemen 48
@@ -11221,7 +11225,7 @@ grazed 1
 grease 10
 greased 2
 greasy 8
-great 426
+great 427
 greatcoat 1
 greater 36
 greatest 51
@@ -11402,7 +11406,7 @@ hair 190
 haired 3
 hairs 7
 hairy 6
-half 284
+half 287
 halfbreed 3
 halfhour 1
 halfway 6
@@ -11717,7 +11721,7 @@ high 134
 higher 30
 highest 22
 highlands 2
-highly 15
+highly 17
 highroad 5
 highway 3
 highwayman 1
@@ -11764,7 +11768,7 @@ hitch 4
 hitched 7
 hither 8
 hitherto 13
-hitting 2
+hitting 3
 hive 3
 hived 1
 ho 1
@@ -11792,7 +11796,7 @@ hogwash 1
 hoist 2
 hoisted 3
 hokey 1
-hold 98
+hold 99
 holder 40
 holding 31
 holds 3
@@ -11866,7 +11870,7 @@ hornet 3
 hornets 1
 hornpipe 1
 horns 4
-horrible 81
+horrible 82
 horriblest 1
 horribly 19
 horrid 30
@@ -12086,7 +12090,7 @@ illuminating 1
 illusion 4
 illusions 1
 illustrate 2
-illustrated 3
+illustrated 4
 illustration 1
 illustrious 6
 im 3
@@ -12503,7 +12507,7 @@ insipid 1
 insist 10
 insisted 11
 insistence 1
-insistent 1
+insistent 2
 insists 3
 insolence 2
 insolences 1
@@ -12746,7 +12750,7 @@ issue 5
 issued 3
 issues 2
 issuing 2
-it 7912
+it 7987
 itch 6
 itched 2
 itching 3
@@ -13003,7 +13007,7 @@ kneeling 4
 knees 51
 knell 1
 knelt 11
-knew 254
+knew 257
 knickknacks 1
 knife 77
 knight 6
@@ -13246,7 +13250,7 @@ ledgers 1
 lee 1
 leer 1
 leering 2
-left 395
+left 399
 leg 49
 legacies 1
 legacy 1
@@ -13288,7 +13292,7 @@ lessening 1
 lesson 14
 lessons 9
 lest 17
-let 492
+let 502
 lethal 1
 lethargic 1
 lethargy 3
@@ -13479,7 +13483,7 @@ locate 1
 located 32
 location 1
 locations 16
-lock 42
+lock 46
 locked 59
 locket 3
 locking 5
@@ -13557,7 +13561,7 @@ lotus 2
 loud 48
 louder 12
 loudest 1
-loudly 21
+loudly 22
 loudness 1
 lounged 4
 loungers 2
@@ -13655,7 +13659,7 @@ mad 77
 madam 17
 maddened 2
 maddening 4
-made 709
+made 719
 madly 6
 madman 5
 madness 19
@@ -13678,7 +13682,7 @@ magnified 1
 magnifying 3
 magnitude 1
 mahogany 3
-maid 68
+maid 70
 maiden 32
 maidens 5
 maids 4
@@ -13700,7 +13704,7 @@ major 2
 majority 2
 make 530
 maker 8
-makes 107
+makes 109
 makin 2
 making 96
 makings 1
@@ -14555,7 +14559,7 @@ nibble 1
 nibbled 2
 nibbling 2
 nic 1
-nice 71
+nice 73
 nicely 9
 nicer 2
 niche 1
@@ -14860,7 +14864,7 @@ omnipotence 1
 omnipotent 3
 omniscient 1
 on 3314
-once 429
+once 434
 oncomfortable 1
 oncommon 1
 ondes 1
@@ -15133,7 +15137,7 @@ pail 9
 pails 1
 pain 76
 pained 4
-painful 23
+painful 25
 painfully 12
 pains 15
 painstaking 1
@@ -15374,7 +15378,7 @@ pecked 8
 pecker 1
 pecking 2
 pecks 1
-peculiar 27
+peculiar 28
 peculiarities 1
 peculiarity 1
 peculiarly 15
@@ -15504,12 +15508,12 @@ persisted 2
 persistence 2
 persistent 3
 persistently 4
-person 122
+person 124
 personage 1
 personal 11
 personalities 2
 personality 17
-personally 8
+personally 9
 personate 1
 personating 2
 personification 1
@@ -16106,7 +16110,7 @@ previous 24
 previously 3
 prey 11
 preyed 4
-price 23
+price 24
 priced 1
 priceless 1
 prices 3
@@ -16428,7 +16432,7 @@ pushed 48
 pushes 1
 pushing 13
 puss 1
-put 470
+put 471
 putrified 1
 puts 14
 puttin 1
@@ -17404,7 +17408,7 @@ rondes 1
 roof 42
 roofed 4
 roofs 6
-room 574
+room 588
 rooms 49
 roosting 3
 root 2
@@ -17670,7 +17674,7 @@ sawmill 2
 saws 2
 say 587
 sayin 5
-saying 126
+saying 129
 sayings 1
 says 686
 scaffold 3
@@ -17978,7 +17982,7 @@ serenely 3
 serenity 1
 series 13
 serious 64
-seriously 17
+seriously 19
 seriousness 1
 sermon 17
 sermons 3
@@ -18006,7 +18010,7 @@ settled 32
 settlement 1
 settles 4
 settling 5
-seven 118
+seven 126
 seventeen 11
 seventeenth 2
 seventh 7
@@ -18150,7 +18154,7 @@ shivers 2
 sho 4
 shoal 3
 shock 12
-shocked 9
+shocked 11
 shocking 4
 shocks 1
 shod 1
@@ -18183,7 +18187,7 @@ shorts 1
 shot 77
 shotgun 1
 shots 3
-should 746
+should 751
 shoulder 53
 shouldered 2
 shouldering 2
@@ -18295,7 +18299,7 @@ signified 1
 signifies 1
 signpainter 3
 signs 46
-silence 86
+silence 87
 silenced 1
 silences 1
 silent 65
@@ -18369,7 +18373,7 @@ sister 209
 sisters 14
 sit 88
 site 33
-sits 14
+sits 15
 sitter 4
 sitters 2
 sitting 127
@@ -19126,7 +19130,7 @@ starvation 2
 starve 5
 starved 3
 starving 1
-state 117
+state 119
 stated 7
 stateliness 1
 stately 8
@@ -19146,7 +19150,7 @@ status 33
 staving 1
 stay 125
 stayed 39
-staying 13
+staying 14
 stays 4
 stead 10
 steadfastly 2
@@ -19311,7 +19315,7 @@ stream 45
 streamed 9
 streaming 5
 streams 3
-street 69
+street 70
 streets 36
 strength 57
 strengthen 3
@@ -19352,7 +19356,7 @@ stroking 1
 stroll 4
 strolled 10
 strolling 3
-strong 79
+strong 81
 stronger 17
 strongest 4
 strongly 21
@@ -19360,7 +19364,7 @@ strove 3
 struck 138
 structure 6
 struggle 18
-struggled 17
+struggled 18
 struggling 10
 strung 4
 strutted 1
@@ -19371,7 +19375,7 @@ studded 3
 student 9
 students 1
 studied 14
-studies 14
+studies 15
 studio 18
 studiously 1
 study 51
@@ -19918,7 +19922,7 @@ temptation 16
 temptations 2
 tempted 7
 tempting 2
-ten 121
+ten 122
 tenable 1
 tenacious 1
 tenant 1
@@ -19974,7 +19978,7 @@ testimony 2
 tete 2
 texas 9
 text 5
-textile 1
+textile 2
 texture 3
 th 27
 than 737
@@ -20071,7 +20075,7 @@ thorns 6
 thorough 1
 thoroughfare 2
 thoroughly 25
-those 247
+those 248
 thou 53
 though 208
 thought 589
@@ -20127,7 +20131,7 @@ throne 9
 throned 2
 throng 3
 thronged 1
-through 505
+through 513
 throughout 13
 throw 72
 throwed 11
@@ -20290,7 +20294,7 @@ tooth 14
 toothache 3
 toothless 1
 toothpicks 1
-top 79
+top 81
 topazes 1
 topic 7
 topmost 3
@@ -20550,7 +20554,7 @@ trot 9
 trotted 4
 trotting 4
 trouble 167
-troubled 30
+troubled 31
 troubles 28
 troublesome 7
 troublesomest 1
@@ -20586,7 +20590,7 @@ truth 74
 truths 1
 try 160
 tryin 3
-trying 72
+trying 74
 tub 4
 tube 1
 tubes 2
@@ -21073,7 +21077,7 @@ unyielding 1
 up 2238
 upbraid 1
 upbraided 1
-updated 4
+updated 5
 upest 1
 uplifted 2
 upon 1034
@@ -21081,7 +21085,7 @@ upper 23
 uppermost 1
 uppish 1
 upraised 1
-upright 12
+upright 17
 uproar 4
 ups 3
 upset 10
@@ -21661,7 +21665,7 @@ wherewith 1
 whether 125
 whetstone 1
 whetted 2
-which 1900
+which 1908
 whichever 3
 whiff 1
 while 348
@@ -21705,7 +21709,7 @@ whistled 12
 whistles 2
 whistling 4
 whit 2
-white 262
+white 263
 whiten 1
 whitened 3
 whiteness 2
@@ -21833,7 +21837,7 @@ wisely 3
 wiser 8
 wises 1
 wisest 5
-wish 233
+wish 234
 wished 116
 wishes 17
 wishin 1
@@ -21956,7 +21960,7 @@ worth 69
 worthless 1
 worthy 17
 would 1958
-wouldn 256
+wouldn 258
 wouldst 2
 wound 19
 wounded 20
@@ -22081,7 +22085,7 @@ young 365
 younger 36
 youngest 28
 youngster 3
-your 1462
+your 1477
 yourn 7
 yours 34
 yourself 172

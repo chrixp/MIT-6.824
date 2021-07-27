@@ -93,7 +93,10 @@ func executeMapFunction(mapf func(string, string) []KeyValue, job MapJob) {
 		}
 		var temp string
 		// fmt.Printf("Finished Map Job. %v Reduce jobs found. Signaling to coordinator...\n", len(reduceBucketFileNames))
-		call("Coordinator.SignalCompletionOfMapJob", reduceBucketFileNames, &temp)
+		call("Coordinator.SignalCompletionOfMapJob", MapJobResult{
+			ReduceJobs: reduceBucketFileNames,
+			ID: job.ID,
+		}, &temp)
 	}
 }
 
@@ -131,6 +134,9 @@ func executeReduceFunction(reducef func(string, []string) string, job ReduceJob)
 
 		i = j
 	}
+	var temp string
+	call("Coordinator.SignalCompletionOfReduceJob", job.ID, &temp)
+
 }
 
 func readEncodedBucketContentFromFile(fileName string) (kva *[]KeyValue) {
@@ -172,6 +178,8 @@ func writeEncodedBucketContentToFile(bucketNumber int, bucketContent *[]KeyValue
 	return bucketFileName, nil
 }
 
+
+
 func askCoordinatorForJob() *Job {
 	var job Job
 	call("Coordinator.GiveAvailableJob", "", &job)
@@ -183,7 +191,6 @@ func askCoordinatorForJob() *Job {
 // returns false if something goes wrong.
 //
 func call(rpcname string, args interface{}, reply interface{}) bool {
-	// c, err := rpc.DialHTTP("tcp", "127.0.0.1"+":1234")
 	gob.Register(MapJob{})
 	gob.Register(ReduceJob{})
 	sockname := coordinatorSock()

@@ -11,24 +11,28 @@ import (
 	"strconv"
 	"sync"
 	"io/ioutil"
-	// "fmt"
+	"github.com/twinj/uuid"
+	"time"
+	//"fmt"
 )
 
 type JobType int
 
 const (
 	ReduceJobType JobType = iota
-	MapJobType
+	MapJobType 
 )
 
 type Job interface {
 	GetType() JobType
+	GetUuid() uuid.UUID
 }
 
 // Map Job Definition
 type MapJob struct {
 	FileName string
 	FilePath string
+	ID uuid.UUID
 }
 
 
@@ -36,6 +40,24 @@ func (mapJob MapJob) GetType() JobType {
 	return MapJobType
 }
 
+func (mapJob MapJob) GetUuid() uuid.UUID {
+	return mapJob.ID
+}
+
+func InitMapJob(fileName string, filePath string) MapJob {
+	return MapJob{
+		FileName: fileName,
+		FilePath: filePath,
+		ID: uuid.NewV4(),
+	}
+}
+
+// Map Job Result definition
+
+type MapJobResult struct {
+	ReduceJobs map[int]string
+	ID uuid.UUID
+}
 
 // Pending Map Jobs
 type PendingMapJobs struct {
@@ -45,10 +67,7 @@ type PendingMapJobs struct {
 
 func (pendingMapJobs *PendingMapJobs) addJob(fileName string, filePath string) {
 	pendingMapJobs.mu.Lock()
-	pendingMapJobs.Jobs = append(pendingMapJobs.Jobs, MapJob{
-		FileName: fileName,
-		FilePath: filePath,
-	})
+	pendingMapJobs.Jobs = append(pendingMapJobs.Jobs, InitMapJob(fileName, filePath))
 	pendingMapJobs.mu.Unlock()
 }
 
@@ -74,10 +93,15 @@ func (pendingMapJobs *PendingMapJobs) isEmpty() bool {
 type ReduceJob struct {
 	FileNames []string
 	BucketNumber int
+	ID uuid.UUID
 }
 
 func (reduceJob ReduceJob) GetType() JobType {
 	return ReduceJobType
+}
+
+func (reduceJob ReduceJob) GetUuid() uuid.UUID {
+	return reduceJob.ID
 }
 
 // Pending Reduce Jobs
@@ -121,12 +145,60 @@ func (pendingReduceJobs *PendingReduceJobs) isEmpty() bool {
 func InitPendingReduceJobs(nReduce int) PendingReduceJobs {
 	twoDReduceJobs := make([]ReduceJob, nReduce)
 	for i:=0; i < nReduce; i++ {
-		twoDReduceJobs[i] = ReduceJob{ BucketNumber: i }
+		twoDReduceJobs[i] = ReduceJob{ 
+			BucketNumber: i,
+			ID: uuid.NewV4(),
+		}
 	}
 	return PendingReduceJobs {
 		Jobs: twoDReduceJobs,
 	}
 }
+
+// Running Jobs
+
+type RunningJob struct {	
+	JobPt Job
+	TimeStarted time.Time
+}
+
+type RunningJobs struct {
+	Jobs []RunningJob
+	mu sync.Mutex
+}
+
+func (runningJobs *RunningJobs) addJob(newJob Job, timeStarted time.Time) {
+	//fmt.Printf("Adding New Job %v\n", newJob.GetUuid())
+	runningJobs.mu.Lock()
+	runningJobs.Jobs = append(runningJobs.Jobs, RunningJob{ 
+		JobPt: newJob,
+		TimeStarted: timeStarted,
+	})
+	runningJobs.mu.Unlock()
+}
+
+func (runningJobs *RunningJobs) removeJob(id uuid.UUID) {
+	runningJobs.mu.Lock()
+	for i,job := range runningJobs.Jobs {
+		if (job.JobPt).GetUuid() == id {
+			jobsLength := len(runningJobs.Jobs)
+			runningJobs.Jobs[i] = runningJobs.Jobs[jobsLength - 1]
+			runningJobs.Jobs = runningJobs.Jobs[:jobsLength - 1]
+			// fmt.Printf("Remove Job %v\n", id)
+			break
+		}
+	}
+
+	runningJobs.mu.Unlock()
+}
+
+func (runningJobs *RunningJobs) isEmpty() bool {
+	runningJobs.mu.Lock()
+	defer runningJobs.mu.Unlock()
+	return len(runningJobs.Jobs) == 0
+}
+
+
 
 
 // Add your RPC definitions here.
