@@ -66,9 +66,6 @@ else
   failed_any=1
 fi
 
-exit 0
-
-
 # wait for remaining workers and coordinator to exit.
 wait
 

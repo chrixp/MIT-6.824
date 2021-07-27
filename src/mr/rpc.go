@@ -218,6 +218,17 @@ func (runningJobs *RunningJobs) isEmpty() bool {
 	return len(runningJobs.Jobs) == 0
 }
 
+func (runningJobs *RunningJobs) hasRunningMapJobs() bool {
+	runningJobs.mu.Lock()
+	defer runningJobs.mu.Unlock()
+	for _, job := range runningJobs.Jobs {
+		if(job.JobPt.GetType() == MapJobType) {
+			return true
+		}
+	}
+	return false
+}
+
 func (runningJobs *RunningJobs) size() int {
 	runningJobs.mu.Lock()
 	defer runningJobs.mu.Unlock()

@@ -36,8 +36,11 @@ func (c *Coordinator) GiveAvailableJob(payload string, job *Job) error {
 	if(!c.pendingMapJobs.isEmpty()) {
 		(*job) = c.pendingMapJobs.getJob()
 		c.runningJobs.addJob(*job, time.Now())
-		// fmt.Printf("A worker picks up a MapJob with path %v\n", (*job).(MapJob).FilePath)
+	} else if c.runningJobs.hasRunningMapJobs() {
+		// If there are running map jobs, reduce jobs shouldn't start
+		return nil
 	} else if (!c.pendingReduceJobs.isEmpty()) {
+		// If no pending map jobs and no running map jobs, reduce jobs can start
 		(*job) = c.pendingReduceJobs.getJob()
 		c.runningJobs.addJob(*job, time.Now())
 		// fmt.Printf("A worker picks up a ReduceJob for bucket %v\n", (*job).(ReduceJob).BucketNumber)

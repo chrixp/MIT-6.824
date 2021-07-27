@@ -53,10 +53,7 @@ func Worker(mapf func(string, string) []KeyValue,
 				executeReduceFunction(reducef, typeAssertedJob)
 			default:
 				time.Sleep(1 * time.Second)
-
 		}
-
-
 	}
 }
 
@@ -93,9 +90,6 @@ func executeMapFunction(mapf func(string, string) []KeyValue, job MapJob) {
 
 		}
 		
-	} else {
-		fmt.Println("Empty bucket")
-		fmt.Println(job)
 	}
 	var temp string
 	// fmt.Printf("Finished Map Job. %v Reduce jobs found. Signaling to coordinator...\n", len(reduceBucketFileNames))
