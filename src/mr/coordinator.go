@@ -27,7 +27,7 @@ type Coordinator struct {
 	taskNumber int
 }
 
-func (c *Coordinator) PrintInfo() {
+func (c *Coordinator) printInfo() {
 	fmt.Printf("Pending Map Jobs: %v, Pending Reduce Jobs %v, Running Jobs: %v \n", c.pendingMapJobs.size(), c.pendingReduceJobs.size(), c.runningJobs.size())
 	
 }
@@ -91,7 +91,7 @@ func (c *Coordinator) Done() bool {
 	return c.pendingReduceJobs.isEmpty() && c.pendingMapJobs.isEmpty() && c.runningJobs.isEmpty()
 }
 
-func (c *Coordinator) CheckIfJobIsDone() {
+func (c *Coordinator) checkIfJobIsDone() {
 	for {
 		time.Sleep(2 * time.Second)
 		if(c.Done()) {
@@ -102,7 +102,33 @@ func (c *Coordinator) CheckIfJobIsDone() {
 	os.Exit(0)
 }
 
+// If one of the worker exits early, the coordinator put the job back into the pending queue
+func (c *Coordinator) monitorWorkerProgress() {
+	for {
+		time.Sleep(1 * time.Second)
+		timedOutJobs := c.runningJobs.getTimedOutJobs()
+		for _, job := range timedOutJobs {
+			switch typeAssertedJob := job.(type) {
+				case MapJob:
+					c.pendingMapJobs.addJob(typeAssertedJob.FileName, typeAssertedJob.FilePath)
+				case ReduceJob:
+					for _,file := range typeAssertedJob.FileNames {
+						c.pendingReduceJobs.addJob(file, typeAssertedJob.BucketNumber)
+					}
+				default:
+					fmt.Println("Invalid Job Type")
+			}
+		}
 
+	}
+}
+
+func (c *Coordinator) periodicallyPrintJobInfo() {
+	for {
+		time.Sleep(3 * time.Second)
+		c.printInfo()
+	}
+}
 
 func readFileAsLines(path string) ([]string, error) {
     file, err := os.Open(path)
@@ -180,7 +206,8 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 	for _, file := range files {
 		c.pendingMapJobs.addJob(file, file)
 	}
-	go c.CheckIfJobIsDone()
+	go c.checkIfJobIsDone()
+	go c.monitorWorkerProgress()
 
 	c.server()
 	return &c

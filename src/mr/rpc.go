@@ -226,13 +226,35 @@ func (runningJobs *RunningJobs) hasRunningMapJobs() bool {
 			return true
 		}
 	}
+
 	return false
+}
+
+func (runningJobs *RunningJobs) getTimedOutJobs() (timedOutJobs []Job) {
+	runningJobs.mu.Lock()
+	defer runningJobs.mu.Unlock()
+	
+	timedOutPeriod := 10 * time.Second
+	remainingJobs := []RunningJob{}
+	for _, job := range runningJobs.Jobs {
+		if(time.Now().Sub(job.TimeStarted) > timedOutPeriod) {
+			timedOutJobs = append(timedOutJobs, job.JobPt)
+		} else {
+			remainingJobs = append(remainingJobs, job)
+		}
+	}
+	
+	if(len(timedOutJobs) > 0) {
+		runningJobs.Jobs = remainingJobs
+	}
+
+	return
+
 }
 
 func (runningJobs *RunningJobs) size() int {
 	runningJobs.mu.Lock()
 	defer runningJobs.mu.Unlock()
-	fmt.Println(runningJobs.Jobs)
 	return len(runningJobs.Jobs)
 }
 

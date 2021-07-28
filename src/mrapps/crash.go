@@ -22,18 +22,20 @@ func maybeCrash() {
 	rr, _ := crand.Int(crand.Reader, max)
 	if rr.Int64() < 330 {
 		// crash!
+		// fmt.Println("Crashed")
 		os.Exit(1)
 	} else if rr.Int64() < 660 {
 		// delay for a while.
 		maxms := big.NewInt(10 * 1000)
 		ms, _ := crand.Int(crand.Reader, maxms)
+		// fmt.Printf("Delaying for %v\n", ms)
 		time.Sleep(time.Duration(ms.Int64()) * time.Millisecond)
 	}
 }
 
 func Map(filename string, contents string) []mr.KeyValue {
 	maybeCrash()
-
+	// fmt.Println("Mapping funning being run")
 	kva := []mr.KeyValue{}
 	kva = append(kva, mr.KeyValue{"a", filename})
 	kva = append(kva, mr.KeyValue{"b", strconv.Itoa(len(filename))})
@@ -44,6 +46,7 @@ func Map(filename string, contents string) []mr.KeyValue {
 
 func Reduce(key string, values []string) string {
 	maybeCrash()
+	// fmt.Println("Reduce function being run")
 
 	// sort values to ensure deterministic output.
 	vv := make([]string, len(values))

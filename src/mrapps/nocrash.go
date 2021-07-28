@@ -13,12 +13,14 @@ import "strings"
 import "os"
 import "sort"
 import "strconv"
+import "fmt"
 
 func maybeCrash() {
 	max := big.NewInt(1000)
 	rr, _ := crand.Int(crand.Reader, max)
 	if false && rr.Int64() < 500 {
 		// crash!
+		fmt.Println("Crashed")
 		os.Exit(1)
 	}
 }
