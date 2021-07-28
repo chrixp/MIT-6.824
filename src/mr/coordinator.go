@@ -168,14 +168,18 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 		pendingReduceJobs: InitPendingReduceJobs(nReduce),
 	}
 
-	var splitChunkWg sync.WaitGroup
+	// var splitChunkWg sync.WaitGroup
+
+	// for _, file := range files {
+	// 	splitChunkWg.Add(1)
+	// 	go c.splitFileIntoChunks(file, &splitChunkWg)
+	// }
+
+	// splitChunkWg.Wait()
 
 	for _, file := range files {
-		splitChunkWg.Add(1)
-		go c.splitFileIntoChunks(file, &splitChunkWg)
+		c.pendingMapJobs.addJob(file, file)
 	}
-
-	splitChunkWg.Wait()
 	go c.CheckIfJobIsDone()
 
 	c.server()
